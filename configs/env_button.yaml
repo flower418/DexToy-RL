@@ -1,0 +1,22 @@
+env:
+  seed: 0
+  max_episode_steps: 150
+  frame_skip: 5 # 每隔 5 个仿真步才做一次决策
+
+  model_xml: dextoy/assets/mujoco/adroit_button.xml
+
+  success_depth: 0.035
+  contact_radius: 0.07
+
+  reward:
+    distance_scale: 2.0 # 离按钮的距离乘以 2 作为 reward
+    contact_bonus: 0.25 # 如果摸到了按钮，直接给 0.25 的 bonus
+    press_scale: 40.0 # 按的深度乘 40 作为 reward
+    success_bonus: 20.0 # 成功了直接给 20 的 bonus
+    action_smoothness: 0.05 # 保证动作连贯度，越不连贯 penalty 越大
+    velocity_penalty: 0.002
+
+render:
+  width: 640
+  height: 480
+  fps: 30
