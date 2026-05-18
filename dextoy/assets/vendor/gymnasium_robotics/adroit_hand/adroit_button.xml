@@ -1,0 +1,61 @@
+<!--
+  DexToy Press Button task built on the official Gymnasium-Robotics Adroit hand.
+
+  The hand model, meshes, tendons, and finger actuators are vendored from:
+  gymnasium_robotics/envs/assets/adroit_hand/
+
+  This file only defines the task scene: table, camera, official forearm/hand
+  include, and a spring-loaded button.
+-->
+<mujoco model="dextoy_adroit_button">
+    <compiler angle="radian" meshdir="resources/meshes" texturedir="resources/textures"/>
+
+    <include file="adroit_assets.xml"/>
+
+    <worldbody>
+        <light directional="false" diffuse=".7 .7 .7" specular="0.03 0.03 0.03" pos="-1 -1.0 4.0" dir="1 1.0 -4"/>
+        <geom name="ground" size="1.5 1.5 0.25" pos="0 0 -1" type="plane" contype="1" conaffinity="0" material="groundplane"/>
+        <camera name="front" pos="0 -1.0 0.75" quat="0.92388 0.382683 0 0"/>
+
+        <body name="table">
+            <geom name="table_top" size="0.45 0.45 0.025" pos="0 0 -0.025" type="box" material="tablecube"/>
+        </body>
+
+        <!-- Official Adroit arm + Shadow hand body tree. -->
+        <body name="forearm" pos="0 -0.7 0.2" euler="-1.57 0 3.14">
+            <inertial pos="0.001 -0.002 0.29" quat="0.982037 -0.0160006 0 -0.188007" mass="4" diaginertia="0.01 0.01 0.0075"/>
+            <joint name="ARTx" pos="0 0 0" axis="1 0 0" type="slide" range="-0.25 0.25" damping="20"/>
+            <joint name="ARTy" pos="0 0 0" axis="0 1 0" type="slide" range="0 0.2" damping="20"/>
+            <joint name="ARTz" pos="0 0 0" axis="0 0 1" type="slide" range="-0.3 0.5" damping="20"/>
+            <joint name="ARRx" pos="0 0 0" axis="1 0 0" range="-.75 .75" damping="20"/>
+            <joint name="ARRy" pos="0 0 0" axis="0 1 0" range="-.75 .75" damping="20"/>
+            <joint name="ARRz" pos="0 0 0" axis="0 0 1" range="-.75 .75" damping="20"/>
+            <geom name="V_forearm" class="D_Vizual" pos="0 -.01 .181" euler="0 0 -1.57" mesh="forearm_simple"/>
+            <geom name="C_forearm1" class="DC_Hand" size="0.05 0.033" pos="0 0 0.29" type="capsule" rgba="0.4 0.5 0.6 0.1"/>
+            <include file="adroit_model.xml"/>
+        </body>
+
+        <!--
+          Button object.
+          It starts in front of the hand. Pressing along +Y increases button_slide.
+        -->
+        <body name="button_base" pos="0 -0.18 0.22">
+            <geom name="button_mount" type="box" size="0.075 0.018 0.075" material="MatColl" contype="1" conaffinity="1"/>
+            <body name="button" pos="0 -0.030 0">
+                <joint name="button_slide" type="slide" axis="0 1 0" range="0 0.050" limited="true" damping="5.0"/>
+                <geom name="button_cap" type="cylinder" size="0.040 0.016" euler="1.57079632679 0 0" mass="0.03" rgba="0.95 0.05 0.05 1" condim="4" friction="1.2 0.3 0.01"/>
+                <site name="S_button" pos="0 -0.018 0" size="0.010" rgba="1 1 0 1"/>
+            </body>
+        </body>
+    </worldbody>
+
+    <actuator>
+        <!-- Official Adroit arm actuators. Finger/wrist actuators come from adroit_assets.xml. -->
+        <general name="A_ARTx" joint="ARTx" ctrlrange="-0.25 0.25" biastype="affine" gainprm="500 0 0" biasprm="0 -200 0"/>
+        <general name="A_ARTy" joint="ARTy" ctrlrange="0.0 0.2" biastype="affine" gainprm="500 0 0" biasprm="0 -200 0"/>
+        <general name="A_ARTz" joint="ARTz" ctrlrange="-0.3 0.5" biastype="affine" gainprm="500 0 0" biasprm="0 -200 0"/>
+        <general name="A_ARRx" joint="ARRx" ctrlrange="-.75 .75" biastype="affine" gainprm="500 0 0" biasprm="0 -200 0"/>
+        <general name="A_ARRy" joint="ARRy" ctrlrange="-.75 .75" biastype="affine" gainprm="500 0 0" biasprm="0 -200 0"/>
+        <general name="A_ARRz" joint="ARRz" ctrlrange="-.75 .75" biastype="affine" gainprm="500 0 0" biasprm="0 -200 0"/>
+    </actuator>
+</mujoco>

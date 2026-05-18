@@ -3,7 +3,7 @@ env:
   max_episode_steps: 150
   frame_skip: 5 # 每隔 5 个仿真步才做一次决策
 
-  model_xml: dextoy/assets/mujoco/adroit_button.xml
+  model_xml: dextoy/assets/vendor/gymnasium_robotics/adroit_hand/adroit_button.xml
 
   success_depth: 0.035
   contact_radius: 0.07
